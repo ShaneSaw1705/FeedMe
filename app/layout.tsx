@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,8 +29,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryClientProvider client={qc}>
-          <Toaster theme="dark" />
-          <main>{children}</main>
+          <UserProvider>
+            <Toaster theme="dark" />
+            <main>{children}</main>
+          </UserProvider>
         </QueryClientProvider>
       </body>
     </html>

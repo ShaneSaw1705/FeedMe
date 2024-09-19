@@ -1,23 +1,24 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { testServer } from "@/hooks/testFunc"
-import { useMutation } from "@tanstack/react-query"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { testServer } from "@/hooks/testFunc"
+import { useUser } from "@auth0/nextjs-auth0/client"
+import { useMutation } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 const LandingPage = () => {
+  const { user } = useUser()
   const { mutate, isPending, isError, error } = useMutation({
-    mutationKey: ['testing'],
+    mutationKey: ['test'],
     mutationFn: testServer,
     onSuccess: () => {
-      toast.success('Server hit!', {
-        description: 'this is a test toast',
+      toast.success('Button was pressed and the server was hit!', {
+        description: 'This is where the description would show',
         action: {
-          label: 'test action',
-          onClick: () => console.log('action commited'),
-        },
+          label: 'Log',
+          onClick: () => console.log('action')
+        }
       })
     }
   })
@@ -25,31 +26,28 @@ const LandingPage = () => {
   if (isError) {
     return <p>Error occured: {`${error}`}</p>
   }
+
   return (
     <div className="flex w-full h-screen items-center justify-center">
       <Card className="w-[300px]">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>{user ? `Hello, ${user.name}` : 'Sign in?'}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={() => mutate()} className="flex flex-col gap-2">
-            <label>Email</label>
-            <Input type="email" name="email" />
-            <label>Password</label>
-            <Input type="password" name="password" />
-            <div className="grid grid-cols-2">
-              {!isPending
-                ?
-                <Button variant={'outline'}>login</Button>
-                :
-                <Button variant={'outline'} disabled>
-                  Loading...
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                </Button>
-              }
-            </div>
-          </form>
+          {user?.sub}
         </CardContent>
+        <CardFooter>
+          {!isPending ?
+            <Button variant={'outline'} onClick={() => mutate()}>Press me</Button>
+            :
+            <Button variant={'outline'} disabled>
+              Please wait
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            </Button>
+          }
+          <Button className="bg-green-300"><a href="/api/auth/login">login</a></Button>
+          {user && <Button variant={'destructive'}><a href="/api/auth/logout">Logout</a></Button>}
+        </CardFooter>
       </Card>
     </div>
   )
