@@ -14,7 +14,8 @@ model Test {
 }
 
 model Feed {
-  id     Int    @id @default(autoincrement())
-  name   String
-  secret String
+  id         Int    @id @default(autoincrement())
+  author_sub String
+  title      String
+  secret     String
 }

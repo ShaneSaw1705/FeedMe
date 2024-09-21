@@ -9,8 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { getSession } from "@auth0/nextjs-auth0"
+import { redirect } from "next/navigation"
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  const user = await getSession()
+  if (!user?.user) {
+    redirect('/')
+  }
   return (
     <div className="h-screen w-screen grid grid-rows-[auto_1fr]">
       <div className="border-b-2 border-gray-200 p-2 flex flex-row justify-between items-center">
@@ -31,14 +37,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         </Select>
         <Button>New Project</Button>
       </div>
-      <div className="grid grid-cols-[auto_1fr] h-full w-full">
-        <div className="flex flex-col gap-2 border-r-2 border-gray-200 min-w-[250px]">
-          <Button variant={'ghost'}>Home</Button>
-          <Button variant={'ghost'}>Feeds</Button>
-          <Button variant={'ghost'}>Profile</Button>
-        </div>
-        {children}
-      </div>
+      {children}
     </div>
   )
 }
