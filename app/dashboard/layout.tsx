@@ -11,10 +11,16 @@ import {
 } from "@/components/ui/select"
 import { getSession } from "@auth0/nextjs-auth0"
 import { redirect } from "next/navigation"
+import { fetchUserFeeds } from "@/hooks/feed"
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getSession()
   if (!user?.user) {
+    redirect('/')
+  }
+  const [err, res] = await fetchUserFeeds()
+  if (err) {
+    console.error(err)
     redirect('/')
   }
   return (
@@ -27,11 +33,9 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Feeds</SelectLabel>
-              <SelectItem value="apple">Test1</SelectItem>
-              <SelectItem value="banana">Test2</SelectItem>
-              <SelectItem value="blueberry">Test3</SelectItem>
-              <SelectItem value="grapes">Test4</SelectItem>
-              <SelectItem value="pineapple">Test5</SelectItem>
+              {res?.map((element) => (
+                <SelectItem value={element.title} key={element.id}>{element.title}</SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>

@@ -19,7 +19,6 @@ export async function createFeed(formData: FormData): Promise<[string | null, Fe
     console.error(err)
     return [err, null]
   }
-
   try {
     const res = await db.feed.create({
       data: {
@@ -32,6 +31,25 @@ export async function createFeed(formData: FormData): Promise<[string | null, Fe
     return [null, res]
   } catch (err) {
     console.error(err)
+    return [`${err}`, null]
+  }
+}
+
+
+export async function fetchUserFeeds(): Promise<[string | null, Feed[] | null]> {
+  const session = await getSession();
+  if (!session?.user.sub) {
+    const err = 'could not get a current signed in user';
+    return [err, null];
+  }
+  try {
+    const res: Feed[] = await db.feed.findMany({
+      where: {
+        author_sub: session.user.sub
+      }
+    })
+    return [null, res]
+  } catch (err) {
     return [`${err}`, null]
   }
 }

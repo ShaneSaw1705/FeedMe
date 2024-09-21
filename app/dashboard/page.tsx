@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { createFeed } from "@/hooks/createFeed"
+import { createFeed } from "@/hooks/feed"
 import { useMutation } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -17,7 +17,9 @@ const Home = () => {
         toast(`An error occured: ${err}`)
       }
       console.log(res)
-      toast(`Feed called "${res?.title}" has been created successfully! 🎉`)
+      if (res?.title != undefined) {
+        toast(`Feed called "${res?.title}" has been created successfully! 🎉`)
+      }
     }
   })
 
