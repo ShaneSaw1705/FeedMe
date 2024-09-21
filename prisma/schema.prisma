@@ -12,3 +12,9 @@ model Test {
   email    String
   password String
 }
+
+model Feed {
+  id     Int    @id @default(autoincrement())
+  name   String
+  secret String
+}

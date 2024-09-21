@@ -18,19 +18,15 @@ const geistMono = localFont({
 
 const qc = new QueryClient()
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
       >
         <QueryClientProvider client={qc}>
           <UserProvider>
-            <Toaster theme="dark" />
+            <Toaster />
             <main>{children}</main>
           </UserProvider>
         </QueryClientProvider>

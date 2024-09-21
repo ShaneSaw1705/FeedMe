@@ -31,7 +31,7 @@ const LandingPage = () => {
     <div className="flex w-full h-screen items-center justify-center">
       <Card className="w-[300px]">
         <CardHeader>
-          <CardTitle>{user ? `Hello, ${user.name}` : 'Sign in?'}</CardTitle>
+          <CardTitle className="text-3xl">{user ? `Hello, ${user.name}` : 'Sign in?'}</CardTitle>
         </CardHeader>
         <CardContent>
           {user?.sub}
