@@ -73,3 +73,25 @@ export async function fetchUserFeeds(): Promise<Feed[]> {
     await prisma.$disconnect();
   }
 }
+
+export async function fetchSingleFeed(id: string): Promise<Feed | null> {
+  const session = await getSession()
+  const projId: number = Number(id)
+  const userId = session?.user.sub
+  if (!userId) {
+    console.error('failed to retreive user id')
+    throw new Error('User not authenticated')
+  }
+  try {
+    const res = await db.feed.findFirst({
+      where: {
+        id: projId,
+        author_sub: userId
+      }
+    })
+    return res
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+}

@@ -1,4 +1,5 @@
 'use client'
+
 import {
   Select,
   SelectContent,
@@ -16,33 +17,41 @@ import { Input } from "./ui/input"
 import { createFeed, fetchUserFeeds } from "@/hooks/feed"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
+import { useRouter } from 'next/navigation'
 
 export const NavBar = () => {
   const [modal, setModal] = useState(false)
+  const router = useRouter() // To handle navigation
   const qc = useQueryClient()
+
   const { mutate, isPending, isError, error: err } = useMutation({
     mutationKey: ['feed'],
     mutationFn: async (formData: FormData) => {
       const [err, res] = await createFeed(formData)
       if (err) {
-        toast(`An error occured: ${err}`)
+        toast(`An error occurred: ${err}`)
       }
-      console.log(res)
       if (res?.title != undefined) {
-        toast(`Feed called "${res?.title}" has been created successfully! 🎉`)
+        toast(`Feed "${res?.title}" created successfully! 🎉`)
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['feeds'] })
     }
   })
+
   const { data: feeds, isPending: feedsLoading, isError: feedError } = useQuery({
     queryKey: ['feeds'],
     queryFn: () => fetchUserFeeds()
   })
 
+  const handleSelect = (value: string) => {
+    qc.invalidateQueries({ queryKey: ['project'] })
+    router.push(`/dashboard/projects/?project=${value}`)
+  }
+
   if (isError) {
-    return <p>An error has occured {`${err}`}</p>
+    return <p>An error has occurred {`${err}`}</p>
   }
 
   return (
@@ -50,7 +59,7 @@ export const NavBar = () => {
       <div className="border-b-2 border-gray-200 p-2 flex flex-row justify-between items-center">
         <div className="z-50">
           {feedsLoading ? <p>loading</p> :
-            <Select>
+            <Select onValueChange={handleSelect}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a Project" />
               </SelectTrigger>
@@ -59,7 +68,9 @@ export const NavBar = () => {
                   <SelectLabel>Feeds</SelectLabel>
                   {feedError && <SelectItem value="error">Failed to load Feeds</SelectItem>}
                   {feeds?.map((element) => (
-                    <SelectItem value={element.title} key={element.id}>{element.title}</SelectItem>
+                    <SelectItem value={`${element.id}`} key={element.id}>
+                      {element.title}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -68,7 +79,9 @@ export const NavBar = () => {
         </div>
         <Button onClick={() => setModal(true)}>New Project</Button>
       </div>
-      {modal &&
+
+      {/* Modal for creating a new feed */}
+      {modal && (
         <div className="w-full h-screen flex justify-center items-center absolute top-0 right-0 left-0 bottom-0">
           <Card>
             <div className="w-full flex flex-row items-center justify-end">
@@ -78,26 +91,30 @@ export const NavBar = () => {
               <CardTitle>Create a Feed</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={async (e) => {
-                e.preventDefault() // Prevent the default form submission behavior
-                const formData = new FormData(e.target as HTMLFormElement)
-                mutate(formData)
-              }} className="flex flex-col gap-2">
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.target as HTMLFormElement)
+                  mutate(formData)
+                }}
+                className="flex flex-col gap-2"
+              >
                 <label>Title</label>
-                <Input type="text" name='title' required />
-                {!isPending ?
-                  <Button variant={'outline'}>Create Feed</Button>
-                  :
-                  <Button variant={'outline'} disabled>
+                <Input type="text" name="title" required />
+                {!isPending ? (
+                  <Button variant="outline">Create Feed</Button>
+                ) : (
+                  <Button variant="outline" disabled>
                     Please wait
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   </Button>
-                }
+                )}
               </form>
             </CardContent>
           </Card>
         </div>
-      }
+      )}
     </>
   )
 }
+
