@@ -19,46 +19,50 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
 
+
 export const NavBar = () => {
-  const [modal, setModal] = useState(false)
-  const router = useRouter() // To handle navigation
-  const qc = useQueryClient()
+  const [modal, setModal] = useState(false);
+  const router = useRouter(); // To handle navigation
+  const qc = useQueryClient();
 
   const { mutate, isPending, isError, error: err } = useMutation({
     mutationKey: ['feed'],
     mutationFn: async (formData: FormData) => {
-      const [err, res] = await createFeed(formData)
+      const [err, res] = await createFeed(formData);
       if (err) {
-        toast(`An error occurred: ${err}`)
+        toast(`An error occurred: ${err}`);
       }
       if (res?.title != undefined) {
-        toast(`Feed "${res?.title}" created successfully! 🎉`)
+        toast(`Feed "${res?.title}" created successfully! 🎉`);
       }
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['feeds'] })
-    }
-  })
+      qc.invalidateQueries({ queryKey: ['feeds'] });
+    },
+  });
 
   const { data: feeds, isPending: feedsLoading, isError: feedError } = useQuery({
     queryKey: ['feeds'],
-    queryFn: () => fetchUserFeeds()
-  })
+    queryFn: () => fetchUserFeeds(),
+  });
 
   const handleSelect = (value: string) => {
-    qc.invalidateQueries({ queryKey: ['project'] })
-    router.push(`/dashboard/projects/?project=${value}`)
-  }
+    qc.setQueryData(['project'], null); // Reset project query data before fetching a new one
+    qc.invalidateQueries({ queryKey: ['project'] }); // Invalidate project query
+    router.push(`/dashboard/projects/?project=${value}`); // Navigate to the selected project
+  };
 
   if (isError) {
-    return <p>An error has occurred {`${err}`}</p>
+    return <p>An error has occurred {`${err}`}</p>;
   }
 
   return (
     <>
       <div className="border-b-2 border-gray-200 p-2 flex flex-row justify-between items-center">
         <div className="z-50">
-          {feedsLoading ? <p>loading</p> :
+          {feedsLoading ? (
+            <p>loading</p>
+          ) : (
             <Select onValueChange={handleSelect}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a Project" />
@@ -75,7 +79,7 @@ export const NavBar = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          }
+          )}
         </div>
         <Button onClick={() => setModal(true)}>New Project</Button>
       </div>
@@ -85,7 +89,9 @@ export const NavBar = () => {
         <div className="w-full h-screen flex justify-center items-center absolute top-0 right-0 left-0 bottom-0">
           <Card>
             <div className="w-full flex flex-row items-center justify-end">
-              <Button onClick={() => setModal(false)} className="text-[14px] p-2 h-8 w-8" variant={'ghost'}>X</Button>
+              <Button onClick={() => setModal(false)} className="text-[14px] p-2 h-8 w-8" variant={'ghost'}>
+                X
+              </Button>
             </div>
             <CardHeader>
               <CardTitle>Create a Feed</CardTitle>
@@ -93,9 +99,9 @@ export const NavBar = () => {
             <CardContent>
               <form
                 onSubmit={async (e) => {
-                  e.preventDefault()
-                  const formData = new FormData(e.target as HTMLFormElement)
-                  mutate(formData)
+                  e.preventDefault();
+                  const formData = new FormData(e.target as HTMLFormElement);
+                  mutate(formData);
                 }}
                 className="flex flex-col gap-2"
               >
@@ -115,6 +121,6 @@ export const NavBar = () => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
