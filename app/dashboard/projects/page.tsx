@@ -3,7 +3,7 @@ import { fetchSingleFeed } from '@/hooks/feed'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { DashboardContentComponent } from '@/components/dashboard-content'
+import { ProjectDashboardComponent } from '@/components/project-dashboard'
 
 
 const Projects = () => {
@@ -33,8 +33,8 @@ const Projects = () => {
   }
 
   return (
-    <div className='flex flex-col w-screen items-center'>
-      <DashboardContentComponent project={data} />
+    <div className='flex flex-col w-screen justify-center items-center'>
+      <ProjectDashboardComponent project={data} />
     </div>
   );
 };
