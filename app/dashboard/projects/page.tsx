@@ -3,6 +3,7 @@ import { fetchSingleFeed } from '@/hooks/feed'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
+import { DashboardContentComponent } from '@/components/dashboard-content'
 
 
 const Projects = () => {
@@ -27,9 +28,13 @@ const Projects = () => {
     return <p>No project selected</p>
   }
 
+  if (data == null) {
+    return <p>data is non existance</p>
+  }
+
   return (
-    <div>
-      <p>Selected Project: {data?.title}</p>
+    <div className='flex flex-col w-screen items-center'>
+      <DashboardContentComponent project={data} />
     </div>
   );
 };
