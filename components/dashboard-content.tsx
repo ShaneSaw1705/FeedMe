@@ -134,8 +134,8 @@ export function DashboardContentComponent(props: Props) {
         {/* Projects */}
         <Card>
           <CardHeader>
-            <CardTitle>Projects</CardTitle>
-            <CardDescription>You have 3 active projects</CardDescription>
+            <CardTitle>Forms</CardTitle>
+            <CardDescription>You have 3 active forms</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
