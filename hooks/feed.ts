@@ -1,13 +1,8 @@
 'use server'
 import { getSession } from "@auth0/nextjs-auth0";
 import { PrismaClient, Feed } from "@prisma/client"
-import { redirect } from "next/navigation"
 
 const db = new PrismaClient()
-
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 export async function createFeed(formData: FormData): Promise<[string | null, Feed | null]> {
   const session = await getSession()
@@ -29,7 +24,6 @@ export async function createFeed(formData: FormData): Promise<[string | null, Fe
         author_sub: `${session.user.sub}`
       }
     })
-    await sleep(2000)
     return [null, res]
   } catch (err) {
     console.error(err)

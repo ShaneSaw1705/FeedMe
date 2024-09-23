@@ -36,7 +36,7 @@ export const NavBar = () => {
       qc.invalidateQueries({ queryKey: ['feeds'] })
     }
   })
-  const { data: feeds, isPending: feedsLoading, isError: feedError, error } = useQuery({
+  const { data: feeds, isPending: feedsLoading, isError: feedError } = useQuery({
     queryKey: ['feeds'],
     queryFn: () => fetchUserFeeds()
   })
@@ -44,28 +44,28 @@ export const NavBar = () => {
   if (isError) {
     return <p>An error has occured {`${err}`}</p>
   }
-  if (feedError) {
-    return <p>Error loading feeds: {error.message}</p>
-  }
 
   return (
     <>
       <div className="border-b-2 border-gray-200 p-2 flex flex-row justify-between items-center">
-        {feedsLoading ? <p>loading</p> :
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a Project" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Feeds</SelectLabel>
-                {feeds?.map((element) => (
-                  <SelectItem value={element.title} key={element.id}>{element.title}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        }
+        <div className="z-50">
+          {feedsLoading ? <p>loading</p> :
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a Project" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Feeds</SelectLabel>
+                  {feedError && <SelectItem value="error">Failed to load Feeds</SelectItem>}
+                  {feeds?.map((element) => (
+                    <SelectItem value={element.title} key={element.id}>{element.title}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          }
+        </div>
         <Button onClick={() => setModal(true)}>New Project</Button>
       </div>
       {modal &&
@@ -84,7 +84,7 @@ export const NavBar = () => {
                 mutate(formData)
               }} className="flex flex-col gap-2">
                 <label>Title</label>
-                <Input type="text" name='title' />
+                <Input type="text" name='title' required />
                 {!isPending ?
                   <Button variant={'outline'}>Create Feed</Button>
                   :
