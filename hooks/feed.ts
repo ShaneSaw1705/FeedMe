@@ -1,6 +1,8 @@
 'use server'
 import { getSession } from "@auth0/nextjs-auth0";
 import { PrismaClient, Feed } from "@prisma/client"
+import { redirect } from "next/navigation"
+
 const db = new PrismaClient()
 
 function sleep(ms: number) {
@@ -36,7 +38,7 @@ export async function createFeed(formData: FormData): Promise<[string | null, Fe
 }
 
 
-export async function fetchUserFeeds(): Promise<[string | null, Feed[] | null]> {
+export async function deprecatedFetchUserFeeds(): Promise<[string | null, Feed[] | null]> {
   const session = await getSession();
   if (!session?.user.sub) {
     const err = 'could not get a current signed in user';
@@ -54,3 +56,26 @@ export async function fetchUserFeeds(): Promise<[string | null, Feed[] | null]> 
   }
 }
 
+export async function fetchUserFeeds(): Promise<Feed[]> {
+  const prisma = new PrismaClient();
+  const session = await getSession()
+  const userId = session?.user.sub
+  if (!userId) {
+    console.error('failed to retreive user id')
+    throw new Error('User not authenticated')
+  }
+  try {
+    const res: Feed[] = await prisma.feed.findMany({
+      where: {
+        author_sub: userId
+      }
+    })
+    // Serialize Prisma data
+    return res.map((feed) => JSON.parse(JSON.stringify(feed)));
+  } catch (err) {
+    console.error(err)
+    throw new Error(`${err}`)
+  } finally {
+    await prisma.$disconnect();
+  }
+}
