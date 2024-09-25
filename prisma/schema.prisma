@@ -19,3 +19,30 @@ model Feed {
   title      String
   secret     String
 }
+
+model Form {
+  id     Int @id @default(autoincrement())
+  feedId Int
+}
+
+model Field {
+  id        Int    @id @default(autoincrement())
+  formId    Int
+  order     Int
+  fieldName String
+}
+
+model Submission {
+  id              Int    @id @default(autoincrement())
+  formId          Int
+  encryptedUserId String
+  rating          Int
+  feedback        String
+}
+
+model submissionField {
+  id           Int    @id @default(autoincrement())
+  submissionId Int
+  fieldId      Int
+  value        String
+}

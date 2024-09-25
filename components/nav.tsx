@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
 } from "@/components/ui/select"
 import { useState } from "react"
 import { Button } from "./ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Loader2 } from "lucide-react"
 import { Input } from "./ui/input"
 import { createFeed, fetchUserFeeds } from "@/hooks/feed"
@@ -95,6 +94,7 @@ export const NavBar = () => {
             </div>
             <CardHeader>
               <CardTitle>Create a Feed</CardTitle>
+              <CardDescription>Enter a title for your feedback.</CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -108,9 +108,9 @@ export const NavBar = () => {
                 <label>Title</label>
                 <Input type="text" name="title" required />
                 {!isPending ? (
-                  <Button variant="outline">Create Feed</Button>
+                  <Button>Create Feed</Button>
                 ) : (
-                  <Button variant="outline" disabled>
+                  <Button disabled>
                     Please wait
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   </Button>

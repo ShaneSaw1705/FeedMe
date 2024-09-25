@@ -14,13 +14,12 @@ interface Props {
 
 export function ProjectDashboardComponent(props: Props) {
   return (
-    <div className="p-6 bg-gray-100">
+    <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">{props.project.title}</h1>
-          <p className="text-gray-500">Last updated: 2 hours ago</p>
         </div>
-        <Badge variant="outline">Active</Badge>
+        <Badge variant="outline" className='bg-green-300'>Active</Badge>
       </div>
 
       {/* Project Metrics */}
