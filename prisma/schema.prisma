@@ -18,16 +18,21 @@ model Feed {
   author_sub String
   title      String
   secret     String
+  forms      Form[]
 }
 
 model Form {
-  id     Int @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
+  title  String
+  feed   Feed    @relation(fields: [feedId], references: [id])
   feedId Int
+  fields Field[]
 }
 
 model Field {
   id        Int    @id @default(autoincrement())
   formId    Int
+  form      Form   @relation(fields: [formId], references: [id])
   order     Int
   fieldName String
 }
