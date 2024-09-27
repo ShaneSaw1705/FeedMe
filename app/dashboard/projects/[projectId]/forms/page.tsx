@@ -5,8 +5,11 @@ import { Separator } from "@/components/ui/separator"
 import { fetchFeedForms } from "@/hooks/forms";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Forms({ params }: { params: { projectId: string } }) {
+	const router = useRouter()
+	const pathname = usePathname()
 	const { data, isPending, isError, error } = useQuery({
 		queryKey: ['forms'],
 		queryFn: async () => fetchFeedForms(Number(params.projectId))
@@ -32,7 +35,9 @@ export default function Forms({ params }: { params: { projectId: string } }) {
 					))}
 				</CardContent>
 				<CardFooter>
-					<Button>New Form</Button>
+					<Button onClick={() => {
+						router.push(`${pathname}/createform`)
+					}}>New Form</Button>
 				</CardFooter>
 			</Card>
 		</div>
